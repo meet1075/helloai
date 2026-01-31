@@ -19,6 +19,7 @@ import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 const formSchema = z
   .object({
@@ -53,15 +54,36 @@ export const SignUpView = () => {
     setPending(true);
     authClient.signUp.email(
       {
-				name: data.name,
+        name: data.name,
         email: data.email,
         password: data.password,
+        callbackURL: "/",
+      },
+      {
+        onSuccess: () => {
+          setPending(false);
+          router.push("/");
+
+          
+        },
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      },
+    );
+  };
+  const onSocial = async (provider: "github" | "google") => {
+    setError(null);
+    setPending(true);
+    authClient.signIn.social(
+      {
+        provider: provider,
+        callbackURL: "/",
       },
       {
         onSuccess: () => {
           setPending(false);
 
-          router.push("/");
         },
         onError: ({ error }) => {
           setError(error.message);
@@ -82,7 +104,7 @@ export const SignUpView = () => {
                     Create a new account
                   </p>
                 </div>
-								<div className="grid gap-3">
+                <div className="grid gap-3">
                   <FormField
                     control={form.control}
                     name="name"
@@ -139,7 +161,7 @@ export const SignUpView = () => {
                     )}
                   />
                 </div>
-								 <div className="grid gap-3">
+                <div className="grid gap-3">
                   <FormField
                     control={form.control}
                     name="confirmPassword"
@@ -165,7 +187,7 @@ export const SignUpView = () => {
                   </Alert>
                 )}
                 <Button type="submit" className="w-full" disabled={pending}>
-                  Sign In
+                  Sign Up
                 </Button>
                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
                   <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -178,16 +200,18 @@ export const SignUpView = () => {
                     className="w-full"
                     type="button"
                     disabled={pending}
+                    onClick={() => onSocial("google")}
                   >
-                    Google
+                    <FaGoogle/>
                   </Button>
                   <Button
                     variant="outline"
                     className="w-full"
                     type="button"
                     disabled={pending}
+                    onClick={() => onSocial("github")}
                   >
-                    Github
+                    <FaGithub/>
                   </Button>
                 </div>
                 <div className="text-center text-sm">

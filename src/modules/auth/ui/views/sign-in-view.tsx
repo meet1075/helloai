@@ -19,16 +19,16 @@ import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
+import {FaGoogle,FaGithub} from "react-icons/fa"
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
 export const SignInView = () => {
-    const router = useRouter();
-    const [error, setError] = useState<string | null>(null);
-    const [pending, setPending] = useState(false);
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -37,26 +37,45 @@ export const SignInView = () => {
     },
   });
 
-  const onSubmit=async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setError(null);
     setPending(true);
-    authClient.signIn.email({
+    authClient.signIn.email(
+      {
         email: data.email,
         password: data.password,
-    },
-    {
+        callbackURL: "/",
+      },
+      {
         onSuccess: () => {
-    setPending(false)
-
-            router.push("/");
+          setPending(false);
+          router.push("/");
         },
-        onError: ({error}) => {
+        onError: ({ error }) => {
+          setError(error.message);
+        },
+      },
+    );
+  };
+  const onSocial = async (provider:"github" | "google") => {
+      setError(null);
+      setPending(true);
+      authClient.signIn.social(
+        {
+          provider: provider,
+          callbackURL: "/",
+        },
+        {
+          onSuccess: () => {
+            setPending(false);
+  
+          },
+          onError: ({ error }) => {
             setError(error.message);
-        }
-    }
-)
-
-  }
+          },
+        },
+      );
+    };
   return (
     <div className="flex flex-col gap-6">
       <Card className="overflow-hidden p-0">
@@ -123,15 +142,33 @@ export const SignInView = () => {
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <Button variant="outline" className="w-full" type="button" disabled={pending}>
-                        Google
-                    </Button>
-                    <Button variant="outline" className="w-full" type="button" disabled={pending}>
-                        Github
-                    </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    type="button"
+                    disabled={pending}
+                    onClick={() => onSocial("google")}
+                  >
+                    <FaGoogle/>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    type="button"
+                    disabled={pending}
+                    onClick={() => onSocial("github")}
+                  >
+                    <FaGithub/>
+                  </Button>
                 </div>
                 <div className="text-center text-sm">
-                    Don&apos;t have an account?{" "}<Link href="/sign-up" className="underline underline-offset-4">Sign Up</Link>
+                  Don&apos;t have an account?{" "}
+                  <Link
+                    href="/sign-up"
+                    className="underline underline-offset-4"
+                  >
+                    Sign Up
+                  </Link>
                 </div>
               </div>
             </form>
@@ -143,7 +180,8 @@ export const SignInView = () => {
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-                By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. 
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        and <a href="#">Privacy Policy</a>.
       </div>
     </div>
   );
