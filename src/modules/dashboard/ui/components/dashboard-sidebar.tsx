@@ -44,7 +44,7 @@ const DashboardSidebar = () => {
     <Sidebar>
       <SidebarHeader className="text-sidebar-accent-foreground">
         <Link href="/" className="flex items-center gap-2 px-2 pt-2">
-          <Image src="./logoo.svg" alt="Hello.AI" height={36} width={36} />
+          <Image src="/logoo.svg" alt="Hello.AI" height={36} width={36} />
           <p className="text-2xl font-semibold">Hello.AI</p>
         </Link>
       </SidebarHeader>
