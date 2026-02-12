@@ -16,8 +16,30 @@ import {
 import { TRPCError } from "@trpc/server";
 import { meetingsInsertSchema, meetingsUpdateSchema } from "../schemas";
 import { MeetingStatus } from "../type";
+import { streamVideo } from "@/lib/stream-video";
+import { generateAvatarUri } from "@/lib/avatar";
 
 export const meetingRouter = createTRPCRouter({
+  generateToken: protectedProcedure.mutation(async ({ ctx }) => {
+    await streamVideo.upsertUsers([
+      {
+        id: ctx.auth.user.id,
+        name: ctx.auth.user.name,
+        role: "admin",
+        image:
+          ctx.auth.user.image ||
+          generateAvatarUri({ seed: ctx.auth.user.id, variant: "initials" }),
+      },
+    ]);
+    const expirationTime = Math.floor(Date.now() / 1000) + 3600;
+    const issuedAt = Math.floor(Date.now() / 1000) - 60;
+    const token = streamVideo.generateUserToken({
+      user_id: ctx.auth.user.id,
+      exp: expirationTime,
+      validity_in_seconds: issuedAt,
+    });
+    return token;
+  }),
   getMany: protectedProcedure
     .input(
       z.object({
@@ -86,10 +108,12 @@ export const meetingRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(async ({ input, ctx }) => {
       const [existingMeetings] = await db
-        .select({ 
+        .select({
           ...getTableColumns(meetings),
           agent: agents,
-          duration: sql<number>`EXTRACT(EPOCH FROM (ended_at - started_at))`.as("duration"),
+          duration: sql<number>`EXTRACT(EPOCH FROM (ended_at - started_at))`.as(
+            "duration",
+          ),
         })
         .from(meetings)
         .innerJoin(agents, eq(meetings.agentId, agents.id))
@@ -122,7 +146,7 @@ export const meetingRouter = createTRPCRouter({
       }
       return updatedMeeting;
     }),
-    remove: protectedProcedure
+  remove: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const [removedMeeting] = await db
@@ -146,6 +170,45 @@ export const meetingRouter = createTRPCRouter({
         .insert(meetings)
         .values({ ...input, userId: ctx.auth.user.id })
         .returning();
+      const call = streamVideo.video.call("default", createdMeetings.id);
+      await call.create({
+        data: {
+          created_by_id: ctx.auth.user.id,
+          custom: {
+            meetingId: createdMeetings.id,
+            meetingName: createdMeetings.name,
+          },
+          settings_override: {
+            transcription: {
+              language: "en",
+              mode: "auto-on",
+              closed_caption_mode: "auto-on",
+            },
+            recording: {
+              mode: "auto-on",
+              quality: "1080p",
+            },
+          },
+        },
+      });
+      const [existingAgent] = await db
+        .select()
+        .from(agents)
+        .where(eq(agents.id, createdMeetings.agentId));
+      if (!existingAgent) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Agent not found",
+        });
+      }
+      await streamVideo.upsertUsers([
+        {
+          id: existingAgent.id,
+          name: existingAgent.name,
+          role: "user",
+          image: generateAvatarUri({ seed: existingAgent.id, variant: "botttsNeutral" }),
+        },
+      ]);
       return createdMeetings;
     }),
 });
