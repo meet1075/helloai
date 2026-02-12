@@ -1,0 +1,25 @@
+<svg width="166" height="135" viewBox="12 0 166 135" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+  <g filter="url(#filter0_d)">
+    <rect x="22" y="26" width="145" height="72" rx="6" fill="white"/>
+    <rect x="22.25" y="26.25" width="144.5" height="71.5" rx="5.75" stroke="#E9F7F0" stroke-width="0.5"/>
+  </g>
+
+  <g filter="url(#filter1_dd)">
+    <rect x="12" y="37" width="166" height="50" rx="8" fill="white"/>
+    <rect x="12.25" y="37.25" width="165.5" height="49.5" rx="7.75" stroke="#E9F7F0" stroke-width="0.5"/>
+  </g>
+
+  <!-- Light gray background box -->
+  <rect x="20" y="45" width="34" height="34" rx="6" fill="#F5F6F6"/>
+
+  <!-- Premium Centered Checkmark -->
+  <path d="M32 62L36 66L43 57" stroke="#B0B3B2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Lines -->
+  <rect x="63" y="49" width="72" height="4" rx="2" fill="#17A34A"/>
+  <rect x="63" y="61" width="64" height="4" rx="2" fill="#D5F2E0"/>
+  <rect x="63" y="73" width="94" height="4" rx="2" fill="#E9F7F0"/>
+
+  <!-- filters unchanged -->
+</svg>
