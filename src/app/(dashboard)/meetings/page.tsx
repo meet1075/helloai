@@ -11,8 +11,15 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { loadSearchParams } from "@/modules/meetings/params";
+import type { SearchParams } from "nuqs/server";
 
-const page = async() => {
+interface Props{
+  searchParams:Promise<SearchParams>
+}
+
+const page = async({searchParams}:Props) => {
+  const filters = await loadSearchParams(searchParams)
   const session = await auth.api.getSession({
       headers: await headers(),
     });
@@ -20,7 +27,9 @@ const page = async() => {
       redirect("/sign-in");
     }
   const queryClient = getQueryClient();
-  void queryClient.prefetchQuery(trpc.meetings.getMany.queryOptions({}));
+  void queryClient.prefetchQuery(trpc.meetings.getMany.queryOptions({
+    ...filters
+  }));
   return (
     <>
     <MeetingListHeader/>

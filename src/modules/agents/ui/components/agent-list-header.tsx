@@ -6,6 +6,8 @@ import { NewAgentDialog } from "./new-agent-dialog";
 import { useAgentsFilters } from "@/modules/agents/hooks/use-agents-filters";
 import { AgentSearchFilter } from "./agent-search-filter";
 import { DEFAULT_PAGE } from "@/constants";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 import { is } from "drizzle-orm";
 
 const AgentListHeader = () => {
@@ -29,6 +31,7 @@ const AgentListHeader = () => {
           New Agent
         </Button>
       </div>
+        <ScrollArea>
       <div className="flex items-center gap-x-2 p-1">
       <AgentSearchFilter/>
       {
@@ -40,6 +43,8 @@ const AgentListHeader = () => {
         )
       }
       </div>
+      <ScrollBar orientation="horizontal"/>
+      </ScrollArea>
     </div>
     </>
   );
