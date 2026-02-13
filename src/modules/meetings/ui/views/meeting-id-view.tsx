@@ -18,6 +18,7 @@ import { UpcomingState } from "../components/upcoming-state";
 import { ActiveState } from "../components/active-state";
 import { CancelledState } from "../components/cancelled-state";
 import { ProcessingState } from "../components/processing-state";
+import { CompletedState } from "../components/completed-state";
 
 interface Props {
   meetingId: string;
@@ -57,7 +58,7 @@ export const MeetingIdView = ({ meetingId }: Props) => {
     <>
 			<RemoveConfirmation />
 			<UpdateMeetingDialog open={updateMeetingDialogOpen} onOpenChange={setUpdateMeetingDialogOpen} initialValues={data} />
-      <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4">
+      <div className="flex-1 py-4 px-4 md:px-8 flex flex-col gap-y-4 min-h-0 overflow-hidden">
         <MeetingIdViewHeader
           meetingId={meetingId}
           meetingName={data.name}
@@ -66,7 +67,7 @@ export const MeetingIdView = ({ meetingId }: Props) => {
         />
 				{isCancelled && <CancelledState/>}
 				{isProcessing && <ProcessingState/>}
-				{isCompleted && <div>Completed</div>}
+				{isCompleted && <CompletedState data={data}/>}
 				{isUpcoming && (<UpcomingState meetingId={meetingId} onCancelMeeting={()=>{}} isCancelling={false}/>)}
 				{isActive &&<ActiveState meetingId={meetingId}/>}
       </div>

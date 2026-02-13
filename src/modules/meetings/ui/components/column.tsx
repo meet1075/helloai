@@ -17,18 +17,12 @@ import {
   ClockFadingIcon,
   LoaderIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatDuration } from "@/lib/utils";
 import { act } from "react";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 
-function formatDuration(seconds: number) {
-  return humanizeDuration(seconds * 1000, {
-    round: true,
-    largest: 1,
-    units: ["h", "m", "s"],
-  });
-}
+
 
 const statusIconMap = {
   upcoming: ClockArrowUpIcon,
@@ -105,7 +99,6 @@ export const columns: ColumnDef<MeetingGetMany[number]>[] = [
         className="capitalize [&>svg]:size-4 flex items-center gap-x-2"
       >
         <ClockFadingIcon className="text-blue-700"/>
-        {row.original.duration ? formatDuration(row.original.duration ?? 0) : "No duration"}
       </Badge>
     ),
   }
