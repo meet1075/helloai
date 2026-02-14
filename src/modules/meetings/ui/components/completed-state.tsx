@@ -14,6 +14,8 @@ import { ScrollBar, ScrollArea } from "@/components/ui/scroll-area";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { formatDuration } from "@/lib/utils";
+import { Transcript } from "./transcript";
+import { ChatProvider } from "./chat-provider";
 interface Props {
   data: MeetingGetOne;
 }
@@ -57,6 +59,12 @@ export const CompletedState = ({ data }: Props) => {
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </div>
+        <TabsContent value="chat">
+          <ChatProvider meetingId={data.id} meetingName={data.name} />
+        </TabsContent>
+        <TabsContent value="transcript">
+          <Transcript meetingId={data.id} />
+        </TabsContent>
         <TabsContent value="recording" className="flex-1 min-h-0 mt-2">
           <div className="bg-white dark:bg-black rounded-lg border px-4 py-3 h-full flex items-center justify-center">
             <video
@@ -96,43 +104,52 @@ export const CompletedState = ({ data }: Props) => {
                 {data.duration ? formatDuration(data.duration) : "No duration"}
               </Badge>
               <div className="text-sm">
-                <MarkDown 
-                components={{
-                  h1:(props)=>(
-                    <h1 className="text-xl font-medium mb-2" {...props}/>
-                  ),
-                   h2:(props)=>(
-                    <h2 className="text-lg font-medium mb-2" {...props}/>
-                  ),
-                   h3:(props)=>(
-                    <h3 className="text-base font-medium mb-2" {...props}/>
-                  ),
-                   h4:(props)=>(
-                    <h4 className="text-sm font-medium mb-2" {...props}/>
-                  ),
-                  p:(props)=>(
-                    <p className="mb-2 leading-relaxed" {...props}/>
-                  ),
-                  ul:(props)=>(
-                    <ul className="list-disc list-inside mb-2" {...props}/>
-                  ),
-                    ol:(props)=>( 
-                    <ol className="list-decimal list-inside mb-2" {...props}/>
-                  ),
-                  li:(props)=>(
-                    <li className="mb-0.5" {...props}/>
-                  ),
-                  strong:(props)=>(
-                    <strong className="font-semibold" {...props}/>
-                  ),
-                  code:(props)=>(
-                    <code className="bg-gray-100 px-1 py-0.5 rounded text-xs" {...props}/>
-                  ),
-                  blockquote:(props)=>(
-                    <blockquote className="border-l-4 pl-4 italic my-2" {...props}/>
-                  ),
-                }}
-                >{data.summary}</MarkDown>
+                <MarkDown
+                  components={{
+                    h1: (props) => (
+                      <h1 className="text-xl font-medium mb-2" {...props} />
+                    ),
+                    h2: (props) => (
+                      <h2 className="text-lg font-medium mb-2" {...props} />
+                    ),
+                    h3: (props) => (
+                      <h3 className="text-base font-medium mb-2" {...props} />
+                    ),
+                    h4: (props) => (
+                      <h4 className="text-sm font-medium mb-2" {...props} />
+                    ),
+                    p: (props) => (
+                      <p className="mb-2 leading-relaxed" {...props} />
+                    ),
+                    ul: (props) => (
+                      <ul className="list-disc list-inside mb-2" {...props} />
+                    ),
+                    ol: (props) => (
+                      <ol
+                        className="list-decimal list-inside mb-2"
+                        {...props}
+                      />
+                    ),
+                    li: (props) => <li className="mb-0.5" {...props} />,
+                    strong: (props) => (
+                      <strong className="font-semibold" {...props} />
+                    ),
+                    code: (props) => (
+                      <code
+                        className="bg-gray-100 px-1 py-0.5 rounded text-xs"
+                        {...props}
+                      />
+                    ),
+                    blockquote: (props) => (
+                      <blockquote
+                        className="border-l-4 pl-4 italic my-2"
+                        {...props}
+                      />
+                    ),
+                  }}
+                >
+                  {data.summary}
+                </MarkDown>
               </div>
             </div>
           </div>
