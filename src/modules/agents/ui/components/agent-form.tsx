@@ -1,4 +1,4 @@
- import { AgentGetOne } from "../../types";
+import { AgentGetOne } from "../../types";
 import { useTRPC } from "../../../../trpc/client";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -37,34 +37,42 @@ export const AgentForm = ({
 
   const createAgent = useMutation(
     trpc.agents.create.mutationOptions({
-      onSuccess: async() => {
+      onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.agents.getMany.queryOptions({})
-        )
-        if(initialValues?.id){
+          trpc.agents.getMany.queryOptions({}),
+        );
+        await queryClient.invalidateQueries(
+          trpc.premium.getFreeUsage.queryOptions(),
+        );
+        if (initialValues?.id) {
           await queryClient.invalidateQueries(
-            trpc.agents.getOne.queryOptions({id:initialValues.id})
-          )
+            trpc.agents.getOne.queryOptions({ id: initialValues.id }),
+          );
         }
-        onSuccess?.()
+
+        onSuccess?.();
       },
       onError: (error) => {
         toast.error(error.message);
+
+        if (error.data?.code === "FORBIDDEN") {
+          router.push("/upgrade");
+        }
       },
     }),
   );
   const updateAgent = useMutation(
     trpc.agents.update.mutationOptions({
-      onSuccess: async() => {
+      onSuccess: async () => {
         await queryClient.invalidateQueries(
-          trpc.agents.getMany.queryOptions({})
-        )
-        if(initialValues?.id){
+          trpc.agents.getMany.queryOptions({}),
+        );
+        if (initialValues?.id) {
           await queryClient.invalidateQueries(
-            trpc.agents.getOne.queryOptions({id:initialValues.id})
-          )
+            trpc.agents.getOne.queryOptions({ id: initialValues.id }),
+          );
         }
-        onSuccess?.()
+        onSuccess?.();
       },
       onError: (error) => {
         toast.error(error.message);
@@ -79,10 +87,10 @@ export const AgentForm = ({
     },
   });
   const isEdit = !!initialValues?.id;
-  const isPending = createAgent.isPending||updateAgent.isPending;
+  const isPending = createAgent.isPending || updateAgent.isPending;
   const onSubmit = (values: z.infer<typeof agentInsertSchema>) => {
     if (isEdit) {
-      updateAgent.mutate({...values,id:initialValues.id});
+      updateAgent.mutate({ ...values, id: initialValues.id });
     } else {
       createAgent.mutate(values);
     }
@@ -123,7 +131,13 @@ export const AgentForm = ({
         />
         <div className="flex justify-between gap-x-2">
           {onCancel && (
-            <Button variant="ghost" disabled={isPending} type="button" onClick={()=>onCancel()} className="bg-red-500" >
+            <Button
+              variant="ghost"
+              disabled={isPending}
+              type="button"
+              onClick={() => onCancel()}
+              className="bg-red-500"
+            >
               Cancel
             </Button>
           )}

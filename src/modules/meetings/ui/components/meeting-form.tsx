@@ -52,15 +52,22 @@ export const MeetingForm = ({
         await queryClient.invalidateQueries(
           trpc.meetings.getMany.queryOptions({})
         )
-        if(initialValues?.id){
+        if(initialValues?.id){  
           await queryClient.invalidateQueries(
             trpc.meetings.getOne.queryOptions({id:initialValues.id})
           )
+          await queryClient.invalidateQueries(
+          trpc.premium.getFreeUsage.queryOptions()
+        )
         }
         onSuccess?.(data.id)
       },
       onError: (error) => {
         toast.error(error.message);
+
+        if (error.data?.code === "FORBIDDEN") {
+          router.push("/upgrade");
+        }
       },
     }),
   );
