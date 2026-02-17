@@ -84,7 +84,7 @@ export const PricingCard = ({
           <div className="flex items-center gap-x-2">
             <h6 className="font-medium text-xl">{title}</h6>
             {badge ? (
-              <Badge className={cn(pricingCardBadgeVariants({ variant }))}>
+              <Badge className={cn(pricingCardBadgeVariants({ variant }),className,"dark:text-black ")}>
                 {badge}
               </Badge>
             ) : null}

@@ -93,13 +93,28 @@ export const columns: ColumnDef<MeetingGetMany[number]>[] = [
   {
     accessorKey: "duration",
     header: "Duration",
-    cell: ({ row }) => (
-      <Badge
-        variant="outline"
-        className="capitalize [&>svg]:size-4 flex items-center gap-x-2"
-      >
-        <ClockFadingIcon className="text-blue-700"/>
-      </Badge>
-    ),
+    cell: ({ row }) => {
+      const duration = row.original.duration;
+      if (!duration || duration <= 0) {
+        return (
+          <Badge
+            variant="outline"
+            className="capitalize [&>svg]:size-4 flex items-center gap-x-2 text-muted-foreground"
+          >
+            <ClockFadingIcon className="text-muted-foreground"/>
+            No duration
+          </Badge>
+        );
+      }
+      return (
+        <Badge
+          variant="outline"
+          className="capitalize [&>svg]:size-4 flex items-center gap-x-2"
+        >
+          <ClockFadingIcon className="text-blue-700"/>
+          {formatDuration(duration)}
+        </Badge>
+      );
+    },
   }
 ];

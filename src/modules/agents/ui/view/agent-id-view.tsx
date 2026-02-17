@@ -80,7 +80,7 @@ export const AgentIdView = ({ agentId }: Props) => {
               variant={"outline"}
               className="flex items-center gap-x-2 [&>svg]:size-4"
             >
-              <VideoIcon />
+              <VideoIcon  className="text-blue-700" />
               {data.meetingCount}{" "}
               {data.meetingCount === 1 ? "Meeting" : "Meetings"}
             </Badge>
