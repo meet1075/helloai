@@ -18,10 +18,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { GeneratedAvatar } from "@/components/generated-avatar";
 import {
-  ChevronDown,
   ChevronDownIcon,
   CreditCardIcon,
   LogInIcon,
@@ -51,7 +50,10 @@ const DashboardUserButton = () => {
         <DrawerTrigger className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between hover:bg-white/10 bg-white/5 overflow-hidden gap-x-2">
           {data.user.image ? (
             <Avatar>
-              <AvatarImage src={data.user.image} />
+              <AvatarImage src={data.user.image} referrerPolicy="no-referrer" />
+              <AvatarFallback>
+                {data.user.name?.charAt(0).toUpperCase() || "U"}
+              </AvatarFallback>
             </Avatar>
           ) : (
             <GeneratedAvatar
@@ -61,7 +63,7 @@ const DashboardUserButton = () => {
             />
           )}
           <div className="flex flex-col gap-0.5 text-left overflow-hidden flex-1 min-w-0">
-            <p className="text-sm truncate w-f ull">{data.user.name}</p>
+            <p className="text-sm truncate w-full">{data.user.name}</p>
             <p className="text-xs truncate w-full">{data.user.email}</p>
           </div>
           <ChevronDownIcon className="size-4 shrink-0" />
@@ -90,7 +92,10 @@ const DashboardUserButton = () => {
       <DropdownMenuTrigger className="rounded-lg border border-border/10 p-3 w-full flex items-center justify-between hover:bg-white/10 bg-white/5 overflow-hidden gap-x-2">
         {data.user.image ? (
           <Avatar>
-            <AvatarImage src={data.user.image} />
+            <AvatarImage src={data.user.image} referrerPolicy="no-referrer" />
+            <AvatarFallback>
+              {data.user.name?.charAt(0).toUpperCase() || "U"}
+            </AvatarFallback>
           </Avatar>
         ) : (
           <GeneratedAvatar
@@ -100,7 +105,7 @@ const DashboardUserButton = () => {
           />
         )}
         <div className="flex flex-col gap-0.5 text-left overflow-hidden flex-1 min-w-0">
-          <p className="text-sm truncate w-f ull">{data.user.name}</p>
+          <p className="text-sm truncate w-full">{data.user.name}</p>
           <p className="text-xs truncate w-full">{data.user.email}</p>
         </div>
         <ChevronDownIcon className="size-4 shrink-0" />
